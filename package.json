@@ -1,21 +1,13 @@
 {
-  "name": "rgrjs",
+  "name": "test",
   "version": "1.0.0",
-  "description": "A collection of educational resources about React, GraphQL, and Relay",
+  "description": "test task",
+  "description": "",
   "scripts": {
     "start": "./node_modules/.bin/babel-node --presets react,es2015,stage-0 server.js",
     "build": "webpack"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/rgrjs/rgrjs.com.git"
-  },
   "author": "",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/rgrjs/rgrjs.com/issues"
-  },
-  "homepage": "https://github.com/rgrjs/rgrjs.com#readme",
   "dependencies": {
     "babel": "^6.5.2",
     "babel-cli": "^6.5.1",
@@ -31,13 +23,11 @@
     "flux": "^2.1.1",
     "graphql": "^0.4.18",
     "graphql-relay": "^0.3.6",
-    "kerberos": "0.0.18",
-    "lodash": "^4.5.0",
-    "moment": "^2.11.2",
-    "mongodb": "^2.1.7",
     "react": "^0.14.7",
     "react-dom": "^0.14.7",
-    "react-relay": "^0.7.1",
+    "react-relay": "^0.8.0",
+    "react-router": "^2.4.0",
+    "react-router-relay": "^0.13.1",
     "webpack": "^1.12.13"
   }
 }

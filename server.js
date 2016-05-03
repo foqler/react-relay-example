@@ -4,16 +4,14 @@ import Schema from './data/schema';
 import GraphQLHTTP from 'express-graphql';
 import {graphql} from 'graphql';
 import {introspectionQuery} from 'graphql/utilities';
-
-import {MongoClient} from 'mongodb';
+import data from './data';
 
 let app = express();
 app.use(express.static('public'));
 
 (async () => {
   try {
-    let db = await MongoClient.connect(process.env.MONGO_URL);
-    let schema = Schema(db);
+    let schema = Schema(data);
 
     app.use('/graphql', GraphQLHTTP({
       schema,

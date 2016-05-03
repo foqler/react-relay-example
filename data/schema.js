@@ -5,6 +5,7 @@ import {
   GraphQLInt,
   GraphQLString,
   GraphQLNonNull,
+  GraphQLBoolean,
   GraphQLID
 } from 'graphql';
 
@@ -14,11 +15,11 @@ import {
   nodeDefinitions,
   connectionDefinitions,
   connectionArgs,
-  connectionFromPromisedArray,
+  connectionFromArray,
   mutationWithClientMutationId
 } from "graphql-relay";
 
-let Schema = (db) => {
+let Schema = (data) => {
   class Store {}
   let store = new Store();
 
@@ -42,80 +43,55 @@ let Schema = (db) => {
     name: 'Store',
     fields: () => ({
       id: globalIdField("Store"),
-      linkConnection: {
-        type: linkConnection.connectionType,
+      oneNews: {
+        type: newsType,
+        args: {
+          id: { type: GraphQLString },
+        },
+        resolve : (_, args) => {
+          return data.find(e => e.id === args.id);
+        }
+      },
+      news: {
+        type: newsConnection.connectionType,
         args: {
           ...connectionArgs,
-          query: { type: GraphQLString }
+          sort: { type: GraphQLBoolean }
         },
         resolve: (_, args) => {
-          let findParams = {};
-          if (args.query) {
-            findParams.title = new RegExp(args.query, 'i');
+          const result = [].concat(data);
+
+          if (args.sort) {
+            result.sort((a, b) => {
+              if (a.type < b.type)
+                return -1;
+              else if (a.type > b.type)
+                return 1;
+              else
+                return 0;
+            });
           }
-          if (!args.limit || args.limit > 200) {
-            args.limit = 100
-          }
-          return connectionFromPromisedArray(
-            db.collection("links")
-              .find(findParams)
-              .sort({createdAt: -1})
-              .limit(args.first).toArray(),
-            args
-          );
+
+          return connectionFromArray(result, args)
         }
       }
     }),
     interfaces: [nodeDefs.nodeInterface]
   });
 
-  let linkType = new GraphQLObjectType({
-    name: 'Link',
+  let newsType = new GraphQLObjectType({
+    name: 'News',
     fields: () => ({
-      id: {
-        type: new GraphQLNonNull(GraphQLID),
-        resolve: (obj) => obj._id
-      },
+      id: { type: GraphQLString },
       title: { type: GraphQLString },
-      url: { type: GraphQLString },
-      createdAt: {
-        type: GraphQLString,
-        resolve: (obj) => new Date(obj.createdAt).toISOString()
-      }
+      type: { type: GraphQLString },
+      content: { type: GraphQLString },
     })
   });
 
-  let linkConnection = connectionDefinitions({
-    name: 'Link',
-    nodeType: linkType
-  });
-
-  let createLinkMutation = mutationWithClientMutationId({
-    name: 'CreateLink',
-
-    inputFields: {
-      title: { type: new GraphQLNonNull(GraphQLString) },
-      url: { type: new GraphQLNonNull(GraphQLString) },
-    },
-
-    outputFields: {
-      linkEdge: {
-        type: linkConnection.edgeType,
-        resolve: (obj) => ({ node: obj.ops[0], cursor: obj.insertedId })
-      },
-      store: {
-        type: storeType,
-        resolve: () => store
-      }
-    },
-
-    mutateAndGetPayload: ({title, url}) => {
-      return db.collection("links").insertOne({
-        title,
-        url,
-        createdAt: Date.now()
-      });
-    }
+  let newsConnection = connectionDefinitions({
+    name: 'News',
+    nodeType: newsType
   });
 
   let schema = new GraphQLSchema({
@@ -129,13 +105,6 @@ let Schema = (db) => {
         }
       })
     }),
-
-    mutation: new GraphQLObjectType({
-      name: 'Mutation',
-      fields: () => ({
-        createLink: createLinkMutation
-      })
-    })
   });
 
   return schema

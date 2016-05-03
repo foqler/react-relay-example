@@ -1,24 +1,38 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import Relay from "react-relay";
-
+import ReactRouterRelay from 'react-router-relay';
+import { Router, Route, browserHistory, applyRouterMiddleware } from 'react-router';
 import Main from "./components/Main";
+import OneNews from "./components/OneNews";
 
-class HomeRoute extends Relay.Route {
-  static routeName = 'Home';
-  static queries = {
-    store: (Component) => Relay.QL`
-      query MainQuery {
-        store { ${Component.getFragment('store') } }
-      }
-    `
-  };
+const a = class A extends React.Component {
+  render() {
+    return <div>qweqw</div>
+  }
 }
 
 ReactDOM.render(
-  <Relay.RootContainer
-    Component={Main}
-    route={new HomeRoute()}
-  />,
+  <Router
+    history={browserHistory}
+    render={applyRouterMiddleware(ReactRouterRelay)}
+    environment={Relay.Store}
+  >
+    <Route
+      path="/"
+      component={Main}
+      queries={{
+        store: () => Relay.QL`query { store }`,
+      }}
+    />
+    <Route
+      path="/user/:id"
+      component={OneNews}
+      prepareParams={(props) => props}
+      queries={{
+        store: () => Relay.QL`query { store }`,
+      }}
+    />
+  </Router>,
   document.getElementById('react')
 );

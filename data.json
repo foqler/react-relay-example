@@ -1,0 +1,32 @@
+[
+  {
+    "id": "1",
+    "title": "Новость 1",
+    "type" : "relay",
+    "content": "Content for 1 news"
+  },
+  {
+    "id": "2",
+    "title": "Новость 2",
+    "type" : "react",
+    "content": "Content for 2 news"
+  },
+  {
+    "id": "3",
+    "title": "Новость 3",
+    "type" : "graphQl",
+    "content": "Content for 3 news"
+  },
+  {
+    "id": "4",
+    "title": "Новость 4",
+    "type" : "react",
+    "content": "Content for 4 news"
+  },
+  {
+    "id": "5",
+    "title": "Новость 5",
+    "type" : "relay",
+    "content": "Content for 5 news"
+  }
+]
