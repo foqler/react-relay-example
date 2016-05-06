@@ -6,12 +6,6 @@ import { Router, Route, browserHistory, applyRouterMiddleware } from 'react-rout
 import Main from "./components/Main";
 import OneNews from "./components/OneNews";
 
-const a = class A extends React.Component {
-  render() {
-    return <div>qweqw</div>
-  }
-}
-
 ReactDOM.render(
   <Router
     history={browserHistory}
